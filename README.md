@@ -196,6 +196,17 @@ ANDROID_RELEASE_KEY_PASSWORD
 
 - `Android CI`: PR/main 검증, debug APK, signed release APK/AAB artifact 생성
 - `Android Release`: 수동 실행 또는 `v*` 태그 푸시로 signed release artifact 생성
+- `Play release`: `v*` 태그 푸시(또는 수동 실행)로 Play용 AAB를 빌드해 Play 테스트 트랙(현재 `alpha` = 비공개 테스트)에 올림
+
+### Play 업로드
+
+`v*` 태그 하나를 올리면 두 워크플로가 따로 돕니다. `Android Release`는 GitHub 릴리스(APK)만 만들고 Play에는 올리지 않으며, Play 업로드는 `Play release`만 합니다. 그래서 같은 태그로 Play에 두 번 올라가지 않습니다.
+
+- `Play release`는 GitHub 환경 `play`에서 돌고, 이 환경은 jeiel85의 승인을 받아야 시작합니다(배포 정책: `main` 브랜치·`v*` 태그만). 서명 키(`ANDROID_RELEASE_*`)와 `PLAY_SERVICE_ACCOUNT_JSON`은 이 환경의 Secrets에 있습니다.
+- 태그 `vX.Y.Z`는 `app/build.gradle.kts`의 `versionName`과 같아야 하고, `store-release-notes/vX.Y.Z.txt`(`<ko-KR>`·`<en-US>` 블록, 각 500자 이내)가 있어야 합니다. 둘 중 하나라도 어긋나면 빌드 전에 멈춥니다.
+- 순서: 시험 → `bundleRelease` → 키스토어 인증서 SHA-256이 Play 업로드 키(`D6:75:4C:…:7C:A5`)와 같은지 확인 → 트랙 상태 조회 → 첫 트랙에 AAB 업로드(AAB 서명 지문·versionCode 재확인) → 나머지 트랙에 같은 versionCode 붙이기 → 트랙 상태 조회. 키스토어는 마지막에 지웁니다. 업로드 스크립트는 [tools/play-publish.ps1](tools/play-publish.ps1)(전역 `play-publish` 스킬의 복사본)입니다.
+- Actions 화면에서 `Play release`를 수동 실행할 때 `dry_run`을 켜면 빌드·서명 확인·트랙 조회까지만 하고 올리지 않습니다.
+- Play 업로드는 이 워크플로가 맡으므로, 로컬에서 `play-publish`로 같은 버전을 다시 올리거나 바탕화면 AAB를 Play Console에 손으로 올리지 않습니다. 같은 versionCode는 Play가 거부합니다. 워크플로가 실패했을 때만 원인을 고친 뒤 수동 실행으로 다시 올립니다.
 
 ## Play Store 준비 자료
 
