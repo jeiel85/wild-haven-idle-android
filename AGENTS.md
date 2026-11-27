@@ -495,7 +495,9 @@ Closes #123
 
 릴리즈 또는 주요 기능 푸시 후에는 CI/CD 상태와 산출물을 확인합니다.
 
-사용자가 "새 버전 만들기" 또는 릴리즈 생성을 요청하면 GitHub Release 생성 확인과 별개로, Play Console 업로드와 즉시 확인을 위해 실제 사용자 바탕화면에도 산출물을 복사합니다.
+사용자가 "새 버전 만들기" 또는 릴리즈 생성을 요청하면 GitHub Release 생성 확인과 별개로, 즉시 확인을 위해 실제 사용자 바탕화면에도 산출물을 복사합니다.
+
+Play 트랙 업로드는 `v*` 태그로 도는 `Play release` 워크플로(`.github/workflows/play-release.yml`, 환경 `play` 승인 필요)가 맡습니다. 바탕화면 AAB를 Play Console에 손으로 올리거나 로컬 `play-publish`로 같은 버전을 다시 올리지 않습니다(README "Play 업로드"). 워크플로가 실패했을 때만 원인을 고친 뒤 수동 실행으로 다시 올립니다.
 
 바탕화면 복사 규칙:
 

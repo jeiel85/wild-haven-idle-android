@@ -1,5 +1,20 @@
 # HISTORY.md
 
+## 2026-11-27 — Play 업로드 CI 워크플로 추가
+
+- 작업: `v*` 태그(또는 수동 실행)로 Play용 AAB를 빌드해 Play `alpha` 트랙에 올리는 `Play release` 워크플로 추가. GitHub 환경 `play`(승인자 jeiel85, `main`·`v*`만)에 서명 키와 Play 서비스 계정 Secrets 등록.
+- 변경 파일:
+  - `.github/workflows/play-release.yml`
+  - `tools/play-publish.ps1`
+  - `README.md`, `AGENTS.md`, `HISTORY.md`
+- 검증:
+  - 키스토어(`wild-haven-release.jks`) 인증서 SHA-256이 백업 `release-signing.env`의 기록과 같음을 로컬 keytool로 확인.
+  - 로컬 `play-publish -ShowTracks`: alpha 11(0.6.4), 다른 트랙 비어 있음.
+  - 출시 노트 분리 스크립트를 `store-release-notes/v0.6.4.txt`로 로컬 실행(ko 211자, en 345자). YAML lint 통과.
+  - CI 실행(dry_run)은 머지 뒤 진행.
+- 후속 작업:
+  - GitHub APK와 Play AAB가 같은 키를 씁니다(채널별 키 분리 미적용). 분리는 Play 앱 서명 키 재설정이 필요한 별도 결정.
+
 ## 2026-05-27 — 릴리즈 노트 태그 및 바탕화면 export 형식 보정
 
 - 작업: v0.6.4 출시 노트의 언어 태그를 닫는 형식으로 수정하고, 다른 프로젝트의 바탕화면 export 파일명 관례를 Wild Haven 규칙에 반영.
